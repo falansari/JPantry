@@ -26,8 +26,8 @@ public class CategoryController {
      * @return Category
      */
     @GetMapping("")
-    public Category getCategory(@PathVariable(value = "id", required = false) Long id,
-                                @PathVariable(value = "name", required = false) String name) {
+    public Category getCategory(@RequestParam(value = "id", required = false) Long id,
+                                @RequestParam(value = "name", required = false) String name) {
         if (id != null) {
             return categoryService.readById(id);
         } else if (name != null) {
@@ -73,8 +73,8 @@ public class CategoryController {
      * @return boolean True if successful.
      */
     @PostMapping("/delete")
-    public boolean deleteCategory(@PathVariable(value = "id", required = false) Long id,
-                                @PathVariable(value = "name", required = false) String name) {
+    public boolean deleteCategory(@RequestParam(value = "id", required = false) Long id,
+                                @RequestParam(value = "name", required = false) String name) {
         if (id != null) {
             return categoryService.deleteById(id);
         } else if (name != null) {
