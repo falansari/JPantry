@@ -38,11 +38,11 @@ public class SourceController {
     }
 
     /**
-     * Get all categories.
+     * Get all sources.
      * @return CompletableFuture ArrayList Source
      */
     @GetMapping("/list")
-    public CompletableFuture<ArrayList<Source>> getAllCategories() {
+    public CompletableFuture<ArrayList<Source>> getAllSources() {
         return sourceService.readAll();
     }
 
