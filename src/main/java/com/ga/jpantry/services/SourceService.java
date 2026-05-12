@@ -25,26 +25,26 @@ public class SourceService {
 
     /**
      * Create a new source.
-     * @param object Object {name (required) String, defaultExpiryPeriodDays (optional) int}
+     * @param source Object {name (required) String, defaultExpiryPeriodDays (optional) int}
      * @return Source
      */
-    public Source create(Source object) {
+    public Source create(Source source) {
         // rule: only owner
         if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
             throw new AccessDeniedException("User not authorized to create a source.");
         }
 
         // rule: name not nullable
-        if (object.getName() == null || object.getName().isBlank()) {
+        if (source.getName() == null || source.getName().isBlank()) {
             throw new BadRequestException("A name must be provided to create a new source.");
         }
 
         // rule: unique, doesn't already exist
-        if (sourceRepository.existsByName(object.getName())) {
-            throw new InformationExistException("A source with the name " + object.getName() + " already exists.");
+        if (sourceRepository.existsByName(source.getName())) {
+            throw new InformationExistException("A source with the name " + source.getName() + " already exists.");
         }
 
-        return sourceRepository.save(object);
+        return sourceRepository.save(source);
     }
 
     /**
@@ -79,33 +79,33 @@ public class SourceService {
 
     /**
      * Update an existing source.
-     * @param object Object {id Long, name String, defaultExpiryPeriodDays int}
+     * @param source Object {id Long, name String, defaultExpiryPeriodDays int}
      * @return Source updated record
      */
-    public Source updateById(Source object) {
+    public Source updateById(Source source) {
         // rule: only owner
         if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
             throw new AccessDeniedException("User not authorized to update a source.");
         }
 
         // rule: id not null
-        if (object.getId() == null)
+        if (source.getId() == null)
             throw new BadRequestException("Source id must not be null.");
 
         // rule: exists
-        Source record = sourceRepository.findById(object.getId())
-                .orElseThrow(() -> new InformationNotFoundException("A source with ID " + object.getId() + " does not exist."));
+        Source record = sourceRepository.findById(source.getId())
+                .orElseThrow(() -> new InformationNotFoundException("A source with ID " + source.getId() + " does not exist."));
 
         // rule: unique, doesn't already exist
-        Source existingName = sourceRepository.findByName(object.getName()).orElse(null);
+        Source existingName = sourceRepository.findByName(source.getName()).orElse(null);
 
         if (existingName != null && !Objects.equals(record.getId(), existingName.getId())) {
-            throw new InformationExistException("A source with the name " + object.getName() + " already exists.");
+            throw new InformationExistException("A source with the name " + source.getName() + " already exists.");
         }
 
         // update record
-        if (!Objects.equals(object.getName(), record.getName())) {
-            record.setName(object.getName());
+        if (!Objects.equals(source.getName(), record.getName())) {
+            record.setName(source.getName());
         }
 
         return sourceRepository.save(record);
