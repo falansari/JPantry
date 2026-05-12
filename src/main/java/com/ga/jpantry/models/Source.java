@@ -1,10 +1,8 @@
 package com.ga.jpantry.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -16,6 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"item"})
 public class Source {
     @Id
     @Column
@@ -24,6 +23,10 @@ public class Source {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "source")
+    private Item item;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
