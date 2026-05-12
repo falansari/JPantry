@@ -39,11 +39,6 @@ public class ItemService {
             throw new BadRequestException("A name must be provided to create a new item.");
         }
 
-        // rule: unique, doesn't already exist
-        if (itemRepository.existsByName(item.getName())) {
-            throw new InformationExistException("A item with the name " + item.getName() + " already exists.");
-        }
-
         return itemRepository.save(item);
     }
 
@@ -59,14 +54,13 @@ public class ItemService {
     }
 
     /**
-     * Get item by its name.
+     * Get list of items that have the same name.
      * @param name String
-     * @return Item
+     * @return CompletableFuture ArrayList Item
      */
-    public Item readByName(String name) {
+    public CompletableFuture<ArrayList<Item>> readAllByName(String name) {
         // rule: exists
-        return itemRepository.findByName(name)
-                .orElseThrow(() -> new InformationNotFoundException("A item with name " + name + " does not exist."));
+        return itemRepository.findAllByName(name);
     }
 
     /**
@@ -137,13 +131,6 @@ public class ItemService {
         // rule: exists
         Item record = itemRepository.findById(item.getId())
                 .orElseThrow(() -> new InformationNotFoundException("A item with ID " + item.getId() + " does not exist."));
-
-        // rule: unique, doesn't already exist
-        Item existingName = itemRepository.findByName(item.getName()).orElse(null);
-
-        if (existingName != null && !Objects.equals(record.getId(), existingName.getId())) {
-            throw new InformationExistException("A item with the name " + item.getName() + " already exists.");
-        }
 
         // update record
         if (!Objects.equals(item.getName(), record.getName())) {
