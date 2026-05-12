@@ -52,7 +52,7 @@ public class CategoryController {
      * @return Category
      */
     @PostMapping("/add")
-    public Category addCategory(Category category) {
+    public Category addCategory(@RequestBody Category category) {
         return categoryService.create(category);
     }
 
@@ -62,7 +62,7 @@ public class CategoryController {
      * @return Category updated record
      */
     @PostMapping("/edit")
-    public Category editCategory(Category category) {
+    public Category editCategory(@RequestBody Category category) {
         return categoryService.updateById(category);
     }
 
