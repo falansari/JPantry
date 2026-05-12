@@ -13,8 +13,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     Optional<Item> findByName(String name);
 
-    void deleteByName(String name);
-
     /**
      * Multithreaded find all
      * @return CompletableFuture ArrayList Item
@@ -44,10 +42,18 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     CompletableFuture<ArrayList<Item>> findAllBySource(Long sourceId);
 
     /**
-     * Multithreaded find all items with a specific quantity.
-     * Useful for finding out of stock items.
+     * Multithreaded find all items under a specific quantity.
+     * Useful for finding out of stock items by defining 1, or low stock items.
      * @return CompletableFuture ArrayList Item
      */
     @Async("executor")
-    CompletableFuture<ArrayList<Item>> findAllByQuantity(int quantity);
+    CompletableFuture<ArrayList<Item>> findAllByQuantityLessThan(int quantity);
+
+    /**
+     * Multithreaded find all items above a specific quantity.
+     * Useful for finding high stock items.
+     * @return CompletableFuture ArrayList Item
+     */
+    @Async("executor")
+    CompletableFuture<ArrayList<Item>> findAllByQuantityGreaterThan(int quantity);
 }
