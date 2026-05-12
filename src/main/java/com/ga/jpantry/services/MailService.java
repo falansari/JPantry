@@ -2,14 +2,16 @@ package com.ga.jpantry.services;
 
 import com.ga.jpantry.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MailService {
-
     private final JavaMailSender mailSender;
+    @Value("$(server.port)")
+    private String port;
 
     @Autowired
     public MailService(JavaMailSender mailSender) {
@@ -23,7 +25,7 @@ public class MailService {
      */
     public void sendVerificationMail(User user, String verificationToken) {
         String subject = "JPantry New User E-mail Verification Token";
-        String url = "http://localhost:5000/auth/users/verify?token=" + verificationToken;
+        String url = "http://localhost:" + port + "/auth/users/verify?token=" + verificationToken;
         String message = "Salaam Alaikum " + user.getEmail() + ",\n\n"
                 + "Please verify your account by clicking on the link below:\n"
                 + url + "\n\n"
@@ -41,7 +43,7 @@ public class MailService {
 
     public void sendPasswordResetMail(User user, String token) {
         String subject = "JPantry User Password Reset Token";
-        String url = "http://localhost:5000/auth/users/reset?token=" + token;
+        String url = "http://localhost:" + port + "/auth/users/reset?token=" + token;
         String message = "Salaam Alaikum " + user.getEmail() + ",\n\n"
                 + "You can reset your account password by clicking on the link below:\n"
                 + url + "\n\n"
