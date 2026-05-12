@@ -2,7 +2,6 @@ package com.ga.jpantry.services;
 
 import com.ga.jpantry.exceptions.AccessDeniedException;
 import com.ga.jpantry.exceptions.BadRequestException;
-import com.ga.jpantry.exceptions.InformationExistException;
 import com.ga.jpantry.exceptions.InformationNotFoundException;
 import com.ga.jpantry.models.Item;
 import com.ga.jpantry.models.enums.Role;

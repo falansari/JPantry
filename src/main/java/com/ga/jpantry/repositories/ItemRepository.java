@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    boolean existsByName(String name);
-
     @Async("executor")
     CompletableFuture<ArrayList<Item>> findAllByName(String name);
 
