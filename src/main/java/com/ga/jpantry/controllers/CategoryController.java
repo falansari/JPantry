@@ -61,7 +61,7 @@ public class CategoryController {
      * @param category Object {id Long, name String, defaultExpiryPeriodDays int}
      * @return Category updated record
      */
-    @PostMapping("/edit")
+    @PatchMapping("/edit")
     public Category editCategory(@RequestBody Category category) {
         return categoryService.updateById(category);
     }
@@ -69,18 +69,10 @@ public class CategoryController {
     /**
      * Delete a category.
      * @param id Long
-     * @param name String
      * @return boolean True if successful.
      */
-    @PostMapping("/delete")
-    public boolean deleteCategory(@RequestParam(value = "id", required = false) Long id,
-                                @RequestParam(value = "name", required = false) String name) {
-        if (id != null) {
-            return categoryService.deleteById(id);
-        } else if (name != null) {
-            return categoryService.deleteByName(name);
-        } else {
-            throw new BadRequestException("Either an id or name must be provided to delete a category.");
-        }
+    @DeleteMapping("/delete")
+    public boolean deleteCategory(@RequestParam(value = "id") Long id) {
+        return categoryService.deleteById(id);
     }
 }

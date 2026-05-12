@@ -88,6 +88,10 @@ public class CategoryService {
             throw new AccessDeniedException("User not authorized to update a category.");
         }
 
+        // rule: id not null
+        if (category.getId() == null)
+            throw new BadRequestException("Category id must not be null.");
+
         // rule: exists
         Category record = categoryRepository.findById(category.getId())
                 .orElseThrow(() -> new InformationNotFoundException("A category with ID " + category.getId() + " does not exist."));
@@ -128,25 +132,6 @@ public class CategoryService {
             throw new InformationNotFoundException("A category with ID " + id + " does not exist.");
 
         categoryRepository.deleteById(id);
-        return true;
-    }
-
-    /**
-     * Delete an item category.
-     * @param name String
-     * @return boolean True if successful.
-     */
-    public boolean deleteByName(String name) {
-        // rule: only owner
-        if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
-            throw new AccessDeniedException("User not authorized to delete a category.");
-        }
-
-        // rule: exists
-        if (!categoryRepository.existsByName(name))
-            throw new InformationNotFoundException("A category with name " + name + " does not exist.");
-
-        categoryRepository.deleteByName(name);
         return true;
     }
 }
