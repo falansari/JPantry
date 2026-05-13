@@ -267,12 +267,11 @@ public class ItemService {
     public void deletePhoto(Long itemId) {
         Item item = readById(itemId);
 
-        if (item.getPhoto() == null) {
-            throw new InformationNotFoundException("Item with ID " + item.getId() + " does not have an associated photo");
+        if (item.getPhoto() != null) {
+            uploads.deleteFile(uploadImagePath, item.getPhoto());
+            item.setPhoto(null);
         }
 
-        uploads.deleteFile(uploadImagePath, item.getPhoto());
-        item.setPhoto(null);
         itemRepository.save(item);
     }
 }
