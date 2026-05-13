@@ -38,11 +38,11 @@ public class LocationController {
     }
 
     /**
-     * Get all categories.
+     * Get all locations.
      * @return CompletableFuture ArrayList Location
      */
     @GetMapping("/list")
-    public CompletableFuture<ArrayList<Location>> getAllCategories() {
+    public CompletableFuture<ArrayList<Location>> getAllLocations() {
         return locationService.readAll();
     }
 

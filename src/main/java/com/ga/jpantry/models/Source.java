@@ -1,14 +1,13 @@
 package com.ga.jpantry.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "sources")
@@ -24,6 +23,10 @@ public class Source {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "source")
+    private List<Item> items;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
