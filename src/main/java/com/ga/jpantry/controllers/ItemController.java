@@ -2,6 +2,7 @@ package com.ga.jpantry.controllers;
 
 import com.ga.jpantry.exceptions.BadRequestException;
 import com.ga.jpantry.models.Item;
+import com.ga.jpantry.models.requests.ItemRequest;
 import com.ga.jpantry.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -98,24 +99,24 @@ public class ItemController {
 
     /**
      * Create a new item.
-     * @param item Object {name (required) String, defaultExpiryPeriodDays (optional) int}
+     * @param request ItemRequest item Object {name (required) String, defaultExpiryPeriodDays (optional) int}
      * @param photo MultipartFile PNG, JPEG. Optional.
      * @return Item
      */
     @PostMapping("/add")
-    public Item addItem(@RequestBody Item item, @RequestParam(value = "photo", required = false) MultipartFile photo) {
-        return itemService.create(item, photo);
+    public Item addItem(@RequestPart("request") ItemRequest request, @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        return itemService.create(request.getItem(), photo, request.getCategoryId(), request.getLocationId(), request.getSourceId());
     }
 
     /**
      * Update an existing item.
-     * @param item Object {id Long, name String, defaultExpiryPeriodDays int}
+     * @param request ItemRequest item Object {id Long (required), name String, defaultExpiryPeriodDays (optional) int}
      * @param photo MultipartFile PNG, JPEG. Optional.
      * @return Item updated record
      */
     @PatchMapping("/edit")
-    public Item editItem(@RequestBody Item item, @RequestParam(value = "photo", required = false) MultipartFile photo) {
-        return itemService.updateById(item, photo);
+    public Item editItem(@RequestPart("request") ItemRequest request, @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        return itemService.updateById(request.getItem(), photo, request.getCategoryId(), request.getLocationId(), request.getSourceId());
     }
 
     /**
