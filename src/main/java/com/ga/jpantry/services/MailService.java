@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailService {
     private final JavaMailSender mailSender;
-    @Value("$(server.port)")
+    @Value("${server.port}")
     private String port;
 
     @Autowired
