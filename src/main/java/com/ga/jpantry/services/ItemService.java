@@ -6,8 +6,12 @@ import com.ga.jpantry.exceptions.InformationNotFoundException;
 import com.ga.jpantry.models.Item;
 import com.ga.jpantry.models.enums.Role;
 import com.ga.jpantry.repositories.ItemRepository;
+import com.ga.jpantry.utilities.Uploads;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -16,18 +20,22 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final Uploads uploads;
+    final String uploadImagePath = "uploads/items";
 
     @Autowired
-    public ItemService(ItemRepository itemRepository) {
+    public ItemService(ItemRepository itemRepository, Uploads uploads) {
         this.itemRepository = itemRepository;
+        this.uploads = uploads;
     }
 
     /**
      * Create a new item.
      * @param item Object {name (required) String, defaultExpiryPeriodDays (optional) int}
+     * @param photo MultipartFile PNG, JPEG. Optional.
      * @return Item
      */
-    public Item create(Item item) {
+    public Item create(Item item, MultipartFile photo) {
         // rule: only owner
         if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
             throw new AccessDeniedException("User not authorized to create a item.");
@@ -36,6 +44,11 @@ public class ItemService {
         // rule: name not nullable
         if (item.getName() == null || item.getName().isBlank()) {
             throw new BadRequestException("A name must be provided to create a new item.");
+        }
+
+        if (!photo.isEmpty()) { // upload photo if any
+            String uploadedPhoto = uploadPhoto(photo);
+            item.setPhoto(uploadedPhoto);
         }
 
         return itemRepository.save(item);
@@ -117,7 +130,7 @@ public class ItemService {
      * @param item Object {id Long, name String, defaultExpiryPeriodDays int}
      * @return Item updated record
      */
-    public Item updateById(Item item) {
+    public Item updateById(Item item, MultipartFile photo) {
         // rule: only owner
         if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
             throw new AccessDeniedException("User not authorized to update a item.");
@@ -128,12 +141,20 @@ public class ItemService {
             throw new BadRequestException("Item id must not be null.");
 
         // rule: exists
-        Item record = itemRepository.findById(item.getId())
-                .orElseThrow(() -> new InformationNotFoundException("A item with ID " + item.getId() + " does not exist."));
+        Item record = readById(item.getId());
 
         // update record
         if (!Objects.equals(item.getName(), record.getName())) {
             record.setName(item.getName());
+        }
+
+        if (!photo.isEmpty()) { // re-upload new photo
+            if (record.getPhoto() != null) {
+                uploads.deleteFile(uploadImagePath, record.getPhoto());
+            }
+
+            String uploadedPhoto = uploadPhoto(photo);
+            record.setPhoto(uploadedPhoto);
         }
 
         return itemRepository.save(record);
@@ -150,11 +171,44 @@ public class ItemService {
             throw new AccessDeniedException("User not authorized to delete a item.");
         }
 
-        // rule: exists
-        if (!itemRepository.existsById(id))
-            throw new InformationNotFoundException("A item with ID " + id + " does not exist.");
-
-        itemRepository.deleteById(id);
+        Item item = readById(id);
+        deletePhoto(item.getId());
+        itemRepository.deleteById(item.getId());
         return true;
+    }
+
+    /**
+     * Upload photo
+     * @param file MultipartFile PNG, JPG
+     * @return ResponseEntity Resource
+     */
+    public String uploadPhoto(MultipartFile file) {
+        return uploads.uploadImage(uploadImagePath, file);
+    }
+
+    /**
+     * Download stored photo
+     * @return ResponseEntity Resource The stored image if any [PNG, JPEG]
+     */
+    public ResponseEntity<Resource> downloadPhoto(Long itemId) {
+        Item item = readById(itemId);
+
+        return uploads.downloadFile(uploadImagePath, item.getPhoto());
+    }
+
+    /**
+     * Delete photo.
+     * @param itemId Long
+     */
+    public void deletePhoto(Long itemId) {
+        Item item = readById(itemId);
+
+        if (item.getPhoto() == null) {
+            throw new InformationNotFoundException("Item with ID " + item.getId() + " does not have an associated photo");
+        }
+
+        uploads.deleteFile(uploadImagePath, item.getPhoto());
+        item.setPhoto(null);
+        itemRepository.save(item);
     }
 }

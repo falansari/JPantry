@@ -4,7 +4,10 @@ import com.ga.jpantry.exceptions.BadRequestException;
 import com.ga.jpantry.models.Item;
 import com.ga.jpantry.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -27,6 +30,16 @@ public class ItemController {
     @GetMapping("")
     public Item getItem(@RequestParam(value = "id") Long id) {
         return itemService.readById(id);
+    }
+
+    /**
+     * Download item's photo.
+     * @param itemId Long Item's id
+     * @return ResponseEntity Resource
+     */
+    @GetMapping("/photo")
+    public ResponseEntity<Resource> downloadItemPhoto(@RequestParam(value = "id") Long itemId) {
+        return itemService.downloadPhoto(itemId);
     }
 
     /**
@@ -86,21 +99,23 @@ public class ItemController {
     /**
      * Create a new item.
      * @param item Object {name (required) String, defaultExpiryPeriodDays (optional) int}
+     * @param photo MultipartFile PNG, JPEG. Optional.
      * @return Item
      */
     @PostMapping("/add")
-    public Item addItem(@RequestBody Item item) {
-        return itemService.create(item);
+    public Item addItem(@RequestBody Item item, @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        return itemService.create(item, photo);
     }
 
     /**
      * Update an existing item.
      * @param item Object {id Long, name String, defaultExpiryPeriodDays int}
+     * @param photo MultipartFile PNG, JPEG. Optional.
      * @return Item updated record
      */
     @PatchMapping("/edit")
-    public Item editItem(@RequestBody Item item) {
-        return itemService.updateById(item);
+    public Item editItem(@RequestBody Item item, @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        return itemService.updateById(item, photo);
     }
 
     /**
