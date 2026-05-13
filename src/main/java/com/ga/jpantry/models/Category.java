@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "categories")
@@ -14,7 +15,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"item"})
 public class Category {
     @Id
     @Column
@@ -32,8 +32,8 @@ public class Category {
     private Integer defaultExpiryPeriodDays;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "category")
-    private Item item;
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "category")
+    private List<Item> items;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

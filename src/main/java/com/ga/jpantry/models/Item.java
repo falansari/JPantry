@@ -57,15 +57,15 @@ public class Item {
     @Column
     private String photo;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "source_id", referencedColumnName = "id")
     private Source source;
 

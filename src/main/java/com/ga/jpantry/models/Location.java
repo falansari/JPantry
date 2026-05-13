@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "locations")
@@ -14,7 +15,6 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"item"})
 public class Location {
     @Id
     @Column
@@ -25,8 +25,8 @@ public class Location {
     private String name;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "location")
-    private Item item;
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "location")
+    private List<Item> items;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
