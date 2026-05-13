@@ -1,6 +1,9 @@
 package com.ga.jpantry.repositories;
 
+import com.ga.jpantry.models.Category;
 import com.ga.jpantry.models.Item;
+import com.ga.jpantry.models.Location;
+import com.ga.jpantry.models.Source;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.scheduling.annotation.Async;
 
@@ -23,21 +26,21 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
      * @return CompletableFuture ArrayList Item
      */
     @Async("executor")
-    CompletableFuture<ArrayList<Item>> findAllByCategory(Long categoryId);
+    CompletableFuture<ArrayList<Item>> findAllByCategory(Category category);
 
     /**
      * Multithreaded find all items belonging to a location.
      * @return CompletableFuture ArrayList Item
      */
     @Async("executor")
-    CompletableFuture<ArrayList<Item>> findAllByLocation(Long locationId);
+    CompletableFuture<ArrayList<Item>> findAllByLocation(Location location);
 
     /**
      * Multithreaded find all items belonging to a source.
      * @return CompletableFuture ArrayList Item
      */
     @Async("executor")
-    CompletableFuture<ArrayList<Item>> findAllBySource(Long sourceId);
+    CompletableFuture<ArrayList<Item>> findAllBySource(Source source);
 
     /**
      * Multithreaded find all items under a specific quantity.

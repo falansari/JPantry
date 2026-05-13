@@ -13,12 +13,12 @@ import com.ga.jpantry.utilities.Uploads;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -114,6 +114,7 @@ public class ItemService {
      * Get all items. Asynchronous Operation.
      * @return CompletableFuture ArrayList Item
      */
+    @Async("executor")
     public CompletableFuture<ArrayList<Item>> readAll() {
         return itemRepository.findAllBy();
     }
@@ -122,24 +123,30 @@ public class ItemService {
      * Get all items belonging to a category. Asynchronous Operation.
      * @return CompletableFuture ArrayList Item
      */
+    @Async("executor")
     public CompletableFuture<ArrayList<Item>> readAllByCategory(Long categoryId) {
-        return itemRepository.findAllByCategory(categoryId);
+        Category category = categoryService.readById(categoryId);
+        return itemRepository.findAllByCategory(category);
     }
 
     /**
      * Get all items belonging to a location. Asynchronous Operation.
      * @return CompletableFuture ArrayList Item
      */
+    @Async("executor")
     public CompletableFuture<ArrayList<Item>> readAllByLocation(Long locationId) {
-        return itemRepository.findAllByLocation(locationId);
+        Location location = locationService.readById(locationId);
+        return itemRepository.findAllByLocation(location);
     }
 
     /**
      * Get all items belonging to a source. Asynchronous Operation.
      * @return CompletableFuture ArrayList Item
      */
+    @Async("executor")
     public CompletableFuture<ArrayList<Item>> readAllBySource(Long sourceId) {
-        return itemRepository.findAllBySource(sourceId);
+        Source source = sourceService.readById(sourceId);
+        return itemRepository.findAllBySource(source);
     }
 
     /**
