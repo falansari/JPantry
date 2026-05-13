@@ -3,7 +3,10 @@ package com.ga.jpantry.services;
 import com.ga.jpantry.exceptions.AccessDeniedException;
 import com.ga.jpantry.exceptions.BadRequestException;
 import com.ga.jpantry.exceptions.InformationNotFoundException;
+import com.ga.jpantry.models.Category;
 import com.ga.jpantry.models.Item;
+import com.ga.jpantry.models.Location;
+import com.ga.jpantry.models.Source;
 import com.ga.jpantry.models.enums.Role;
 import com.ga.jpantry.repositories.ItemRepository;
 import com.ga.jpantry.utilities.Uploads;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -22,11 +26,17 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final Uploads uploads;
     final String uploadImagePath = "uploads/items";
+    private final CategoryService categoryService;
+    private final LocationService locationService;
+    private final SourceService sourceService;
 
     @Autowired
-    public ItemService(ItemRepository itemRepository, Uploads uploads) {
+    public ItemService(ItemRepository itemRepository, Uploads uploads, CategoryService categoryService, LocationService locationService, SourceService sourceService) {
         this.itemRepository = itemRepository;
         this.uploads = uploads;
+        this.categoryService = categoryService;
+        this.locationService = locationService;
+        this.sourceService = sourceService;
     }
 
     /**
@@ -35,7 +45,7 @@ public class ItemService {
      * @param photo MultipartFile PNG, JPEG. Optional.
      * @return Item
      */
-    public Item create(Item item, MultipartFile photo) {
+    public Item create(Item item, MultipartFile photo, Long categoryId, Long locationId, Long sourceId) {
         // rule: only owner
         if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
             throw new AccessDeniedException("User not authorized to create a item.");
@@ -46,9 +56,34 @@ public class ItemService {
             throw new BadRequestException("A name must be provided to create a new item.");
         }
 
-        if (!photo.isEmpty()) { // upload photo if any
-            String uploadedPhoto = uploadPhoto(photo);
-            item.setPhoto(uploadedPhoto);
+        if (photo != null) {
+            if (!photo.isEmpty()) { // upload photo if any
+                String uploadedPhoto = uploadPhoto(photo);
+                item.setPhoto(uploadedPhoto);
+            }
+        }
+
+        if (categoryId != null) {
+            Category category = categoryService.readById(categoryId);
+            item.setCategory(category);
+
+            if (item.getExpiryDate() == null) { // set default expiry if custom not set
+                if (item.getProductionDate() != null) { // based on production date if set
+                    item.setExpiryDate(item.getProductionDate().plusDays(category.getDefaultExpiryPeriodDays()));
+                } else { // based on today's date
+                    item.setExpiryDate(LocalDate.now().plusDays(category.getDefaultExpiryPeriodDays()));
+                }
+            }
+        }
+
+        if (locationId != null) {
+            Location location = locationService.readById(locationId);
+            item.setLocation(location);
+        }
+
+        if (sourceId != null) {
+            Source source = sourceService.readById(sourceId);
+            item.setSource(source);
         }
 
         return itemRepository.save(item);
@@ -130,7 +165,7 @@ public class ItemService {
      * @param item Object {id Long, name String, defaultExpiryPeriodDays int}
      * @return Item updated record
      */
-    public Item updateById(Item item, MultipartFile photo) {
+    public Item updateById(Item item, MultipartFile photo, Long categoryId, Long locationId, Long sourceId) {
         // rule: only owner
         if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
             throw new AccessDeniedException("User not authorized to update a item.");
@@ -143,19 +178,41 @@ public class ItemService {
         // rule: exists
         Item record = readById(item.getId());
 
-        // update record
-        if (!Objects.equals(item.getName(), record.getName())) {
-            record.setName(item.getName());
-        }
+        if (photo != null) {
+            if (!photo.isEmpty()) { // re-upload new photo
+                if (record.getPhoto() != null) {
+                    uploads.deleteFile(uploadImagePath, record.getPhoto());
+                }
 
-        if (!photo.isEmpty()) { // re-upload new photo
-            if (record.getPhoto() != null) {
-                uploads.deleteFile(uploadImagePath, record.getPhoto());
+                String uploadedPhoto = uploadPhoto(photo);
+                record.setPhoto(uploadedPhoto);
             }
-
-            String uploadedPhoto = uploadPhoto(photo);
-            record.setPhoto(uploadedPhoto);
         }
+
+        if (categoryId != null) { // update category
+            Category category = categoryService.readById(categoryId);
+            record.setCategory(category);
+
+            // set default expiry
+            if (record.getExpiryDate() == null) record.setExpiryDate(LocalDate.now().plusDays(category.getDefaultExpiryPeriodDays()));
+        }
+
+        if (locationId != null) {
+            Location location = locationService.readById(locationId);
+            record.setLocation(location);
+        }
+
+        if (sourceId != null) {
+            Source source = sourceService.readById(sourceId);
+            record.setSource(source);
+        }
+
+        // update record
+        if (item.getName() != null) record.setName(item.getName());
+        if (item.getProductionDate() != null) record.setProductionDate(item.getProductionDate());
+        if (item.getExpiryDate() != null) record.setExpiryDate(item.getExpiryDate()); // override default expiry
+        if (item.getPrice() != null) record.setPrice(item.getPrice());
+        if (item.getQuantity() != record.getQuantity()) record.setQuantity(item.getQuantity());
 
         return itemRepository.save(record);
     }
