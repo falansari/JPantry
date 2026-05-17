@@ -73,6 +73,11 @@ public class Item {
     @JoinColumn(name = "source_id", referencedColumnName = "id")
     private Source source;
 
+    @JsonIgnore
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "barcode_id", referencedColumnName = "id")
+    private Barcode barcode;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
