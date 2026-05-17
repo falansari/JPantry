@@ -3,10 +3,7 @@ package com.ga.jpantry.services;
 import com.ga.jpantry.exceptions.AccessDeniedException;
 import com.ga.jpantry.exceptions.BadRequestException;
 import com.ga.jpantry.exceptions.InformationNotFoundException;
-import com.ga.jpantry.models.Category;
-import com.ga.jpantry.models.Item;
-import com.ga.jpantry.models.Location;
-import com.ga.jpantry.models.Source;
+import com.ga.jpantry.models.*;
 import com.ga.jpantry.models.enums.Role;
 import com.ga.jpantry.repositories.ItemRepository;
 import com.ga.jpantry.utilities.Uploads;
@@ -29,23 +26,25 @@ public class ItemService {
     private final CategoryService categoryService;
     private final LocationService locationService;
     private final SourceService sourceService;
+    private final BarcodeService barcodeService;
 
     @Autowired
-    public ItemService(ItemRepository itemRepository, Uploads uploads, CategoryService categoryService, LocationService locationService, SourceService sourceService) {
+    public ItemService(ItemRepository itemRepository, Uploads uploads, CategoryService categoryService, LocationService locationService, SourceService sourceService, BarcodeService barcodeService) {
         this.itemRepository = itemRepository;
         this.uploads = uploads;
         this.categoryService = categoryService;
         this.locationService = locationService;
         this.sourceService = sourceService;
+        this.barcodeService = barcodeService;
     }
 
     /**
      * Create a new item.
-     * @param item Object {name (required) String, defaultExpiryPeriodDays (optional) int}
+     * @param item Object name String required, rest optional.
      * @param photo MultipartFile PNG, JPEG. Optional.
      * @return Item
      */
-    public Item create(Item item, MultipartFile photo, Long categoryId, Long locationId, Long sourceId) {
+    public Item create(Item item, MultipartFile photo, String barcode, Long categoryId, Long locationId, Long sourceId) {
         // rule: only owner
         if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
             throw new AccessDeniedException("User not authorized to create a item.");
@@ -61,6 +60,19 @@ public class ItemService {
                 String uploadedPhoto = uploadPhoto(photo);
                 item.setPhoto(uploadedPhoto);
             }
+        }
+
+        if (barcode != null) {
+            Barcode itemBarcode = barcodeService.readByBarcode(barcode);
+
+            // Create new barcode if not present
+            if (itemBarcode == null) {
+                Barcode newBarcode = new Barcode();
+                newBarcode.setBarcode(barcode);
+                itemBarcode = barcodeService.create(newBarcode);
+            }
+
+            item.setBarcode(itemBarcode);
         }
 
         if (categoryId != null) {
@@ -120,6 +132,16 @@ public class ItemService {
     }
 
     /**
+     * Get all items belonging to a barcode. Asynchronous Operation.
+     * @return CompletableFuture ArrayList Item
+     */
+    @Async("executor")
+    public CompletableFuture<ArrayList<Item>> readAllByBarcode(String barcode) {
+        Barcode itemBarcode = barcodeService.readByBarcode(barcode);
+        return itemRepository.findAllByBarcode(itemBarcode);
+    }
+
+    /**
      * Get all items belonging to a category. Asynchronous Operation.
      * @return CompletableFuture ArrayList Item
      */
@@ -172,7 +194,7 @@ public class ItemService {
      * @param item Object {id Long, name String, defaultExpiryPeriodDays int}
      * @return Item updated record
      */
-    public Item updateById(Item item, MultipartFile photo, Long categoryId, Long locationId, Long sourceId) {
+    public Item updateById(Item item, MultipartFile photo, String barcode, Long categoryId, Long locationId, Long sourceId) {
         // rule: only owner
         if (!UserService.getCurrentLoggedInUser().getRole().equals(Role.OWNER)) {
             throw new AccessDeniedException("User not authorized to update a item.");
@@ -194,6 +216,19 @@ public class ItemService {
                 String uploadedPhoto = uploadPhoto(photo);
                 record.setPhoto(uploadedPhoto);
             }
+        }
+
+        if (barcode != null) {
+            Barcode itemBarcode = barcodeService.readByBarcode(barcode);
+
+            // Create new barcode if not present
+            if (itemBarcode == null) {
+                Barcode newBarcode = new Barcode();
+                newBarcode.setBarcode(barcode);
+                itemBarcode = barcodeService.create(newBarcode);
+            }
+
+            item.setBarcode(itemBarcode);
         }
 
         if (categoryId != null) { // update category

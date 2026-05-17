@@ -28,7 +28,7 @@ public class Barcode {
     private String barcode;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "location")
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "barcode")
     private List<Item> items;
 
     @CreationTimestamp

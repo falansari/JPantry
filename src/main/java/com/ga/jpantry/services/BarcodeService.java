@@ -61,12 +61,12 @@ public class BarcodeService {
     /**
      * Get barcode by its barcode.
      * @param barcode String
-     * @return Barcode
+     * @return Barcode if found, else returns null.
      */
     public Barcode readByBarcode(String barcode) {
         // rule: exists
         return barcodeRepository.findByBarcode(barcode)
-                .orElseThrow(() -> new InformationNotFoundException("A barcode with barcode " + barcode + " does not exist."));
+                .orElse(null);
     }
 
     /**

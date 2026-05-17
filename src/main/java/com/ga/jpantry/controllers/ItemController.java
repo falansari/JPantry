@@ -53,19 +53,22 @@ public class ItemController {
     }
 
     /**
-     * Get all items by their name, category, location, or source, in that priority.
+     * Get all items by their name, barcode, category, location, or source, in that priority.
      * Not combinable.
      * @return CompletableFuture ArrayList Item
      */
     @GetMapping("/list/by")
     public CompletableFuture<ArrayList<Item>> GetAllItemsBy(
             @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "barcode", required = false) String barcode,
             @RequestParam(value = "category", required = false) Long categoryId,
             @RequestParam(value = "location", required = false) Long locationId,
             @RequestParam(value = "source", required = false) Long sourceId
     ) {
         if (name != null) {
             return itemService.readAllByName(name);
+        } else if (barcode != null) {
+            return itemService.readAllByBarcode(barcode);
         } else if (categoryId != null) {
             return itemService.readAllByCategory(categoryId);
         } else if (locationId != null) {
@@ -104,8 +107,15 @@ public class ItemController {
      * @return Item
      */
     @PostMapping("/add")
-    public Item addItem(@RequestPart("request") ItemRequest request, @RequestParam(value = "photo", required = false) MultipartFile photo) {
-        return itemService.create(request.getItem(), photo, request.getCategoryId(), request.getLocationId(), request.getSourceId());
+    public Item addItem(@RequestPart("request") ItemRequest request,
+                        @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        return itemService.create(
+                request.getItem(),
+                photo,
+                request.getBarcode(),
+                request.getCategoryId(),
+                request.getLocationId(),
+                request.getSourceId());
     }
 
     /**
@@ -115,8 +125,15 @@ public class ItemController {
      * @return Item updated record
      */
     @PatchMapping("/edit")
-    public Item editItem(@RequestPart("request") ItemRequest request, @RequestParam(value = "photo", required = false) MultipartFile photo) {
-        return itemService.updateById(request.getItem(), photo, request.getCategoryId(), request.getLocationId(), request.getSourceId());
+    public Item editItem(@RequestPart("request") ItemRequest request,
+                         @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        return itemService.updateById(
+                request.getItem(),
+                photo,
+                request.getBarcode(),
+                request.getCategoryId(),
+                request.getLocationId(),
+                request.getSourceId());
     }
 
     /**
