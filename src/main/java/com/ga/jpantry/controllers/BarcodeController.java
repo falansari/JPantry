@@ -4,11 +4,11 @@ import com.ga.jpantry.exceptions.BadRequestException;
 import com.ga.jpantry.models.Barcode;
 import com.ga.jpantry.services.BarcodeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
@@ -87,5 +87,15 @@ public class BarcodeController {
     @GetMapping("/scan")
     public String scanBarcodeImage(@RequestParam(value = "barcode") MultipartFile barcodeImage) {
         return barcodeService.readFromImage(barcodeImage);
+    }
+
+    /**
+     * Generate and save barcode image from barcode number.
+     * @param barcode String barcode number
+     * @return ResponseEntity Resource Barcode image.
+     */
+    @PostMapping("/generate")
+    public ResponseEntity<Resource> generateBarcodeImage(@RequestParam(value = "barcode") String barcode) {
+        return barcodeService.generateBarcodeImage(barcode);
     }
 }

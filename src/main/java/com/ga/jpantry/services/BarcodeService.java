@@ -1,24 +1,23 @@
 package com.ga.jpantry.services;
 
-import com.ga.jpantry.exceptions.AccessDeniedException;
-import com.ga.jpantry.exceptions.BadRequestException;
-import com.ga.jpantry.exceptions.InformationExistException;
-import com.ga.jpantry.exceptions.InformationNotFoundException;
+import com.ga.jpantry.exceptions.*;
 import com.ga.jpantry.models.Barcode;
 import com.ga.jpantry.models.enums.Role;
 import com.ga.jpantry.repositories.BarcodeRepository;
+import com.ga.jpantry.utilities.Uploads;
 import com.spire.barcode.BarCodeGenerator;
 import com.spire.barcode.BarCodeType;
 import com.spire.barcode.BarcodeScanner;
 import com.spire.barcode.BarcodeSettings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -26,10 +25,13 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class BarcodeService {
     private final BarcodeRepository barcodeRepository;
+    private final Uploads uploads;
+    final String uploadImagePath = "uploads/barcodes";
 
     @Autowired
-    public BarcodeService(BarcodeRepository barcodeRepository) {
+    public BarcodeService(BarcodeRepository barcodeRepository, Uploads uploads) {
         this.barcodeRepository = barcodeRepository;
+        this.uploads = uploads;
     }
 
     /**
@@ -153,6 +155,39 @@ public class BarcodeService {
 
         } catch (Exception e) {
             throw new BadRequestException("Error executing read barcode image: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Generate and save barcode image from barcode number.
+     * @param barcode String barcode number
+     * @return ResponseEntity Resource Barcode image.
+     * @throws FailedRequestException No image writer found.
+     * @throws BadRequestException Error generating image.
+     */
+    public ResponseEntity<Resource> generateBarcodeImage(String barcode) {
+        // Set settings for generated image
+        BarcodeSettings settings = new BarcodeSettings();
+        settings.setType(BarCodeType.EAN_13);
+        settings.setData(barcode);
+        settings.setData2D(barcode);
+        settings.setShowTextOnBottom(true);
+        settings.hasBorder(false);
+
+        try {
+            // Generate barcode image
+            BarCodeGenerator generator = new BarCodeGenerator(settings);
+            BufferedImage image = generator.generateImage();
+            boolean success = ImageIO.write(image, "png",
+                    new File(uploadImagePath + "/barcode_" + barcode + ".png"));
+
+            if (success) {
+                return uploads.downloadFile(uploadImagePath, "barcode_"+barcode+".png");
+            } else {
+                throw new FailedRequestException("error writing barcode image: no writer found.");
+            }
+        } catch (Exception e) {
+            throw new BadRequestException("Error executing generate barcode image: " + e.getMessage());
         }
     }
 }
