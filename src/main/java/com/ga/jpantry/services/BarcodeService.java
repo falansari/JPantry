@@ -7,9 +7,18 @@ import com.ga.jpantry.exceptions.InformationNotFoundException;
 import com.ga.jpantry.models.Barcode;
 import com.ga.jpantry.models.enums.Role;
 import com.ga.jpantry.repositories.BarcodeRepository;
+import com.spire.barcode.BarCodeGenerator;
+import com.spire.barcode.BarCodeType;
+import com.spire.barcode.BarcodeScanner;
+import com.spire.barcode.BarcodeSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -128,5 +137,22 @@ public class BarcodeService {
 
         barcodeRepository.deleteById(id);
         return true;
+    }
+
+    /**
+     * Get barcode number as String from barcode image. EAN-13 barcodes supported only.
+     * @param barcodeImage MultipartFile image
+     * @return String
+     */
+    public String readFromImage(MultipartFile barcodeImage) {
+        if (barcodeImage == null) throw new BadRequestException("Barcode image must not be null.");
+        if (barcodeImage.isEmpty()) throw new BadRequestException("Barcode image must not be empty.");
+
+        try { // Supporting EAN-13 barcodes only for enhanced scanning accuracy
+            return BarcodeScanner.scanOne(barcodeImage.getInputStream(), BarCodeType.EAN_13, true);
+
+        } catch (Exception e) {
+            throw new BadRequestException("Error executing read barcode image: " + e.getMessage());
+        }
     }
 }

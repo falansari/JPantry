@@ -5,7 +5,10 @@ import com.ga.jpantry.models.Barcode;
 import com.ga.jpantry.services.BarcodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
@@ -74,5 +77,15 @@ public class BarcodeController {
     @DeleteMapping("/delete")
     public boolean deleteBarcode(@RequestParam(value = "id") Long id) {
         return barcodeService.deleteById(id);
+    }
+
+    /**
+     * Get barcode number as String from barcode image. EAN-13 barcodes supported only.
+     * @param barcodeImage barcode Image file
+     * @return String barcode number
+     */
+    @GetMapping("/scan")
+    public String scanBarcodeImage(@RequestParam(value = "barcode") MultipartFile barcodeImage) {
+        return barcodeService.readFromImage(barcodeImage);
     }
 }
