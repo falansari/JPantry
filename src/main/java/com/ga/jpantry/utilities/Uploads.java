@@ -1,6 +1,7 @@
 package com.ga.jpantry.utilities;
 
 import com.ga.jpantry.exceptions.BadRequestException;
+import com.ga.jpantry.exceptions.FailedRequestException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
@@ -9,7 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -86,6 +90,29 @@ public class Uploads {
     }
 
     /**
+     * Upload a file to the server from a URL.
+     * @param fileUrl String File url
+     * @param uploadPath String local Path to upload file to.
+     * @return String Uploaded file's name
+     */
+    public String uploadFromExternalSource(String fileUrl, String uploadPath) {
+        try {
+            URL url = URI.create(fileUrl).toURL();
+
+            String filename = Paths.get(url.getPath()).getFileName().toString();
+            Path targetPath = Paths.get(uploadPath).resolve(UUID.randomUUID() + "_" + filename);
+
+            InputStream inputStream = url.openStream();
+
+            Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+            return targetPath.toAbsolutePath().getFileName().toString();
+        } catch (IOException e) {
+            throw new FailedRequestException("Failed to upload file: " + e.getMessage());
+        }
+    }
+
+    /**
      * Download a stored image file.
      * @param uploadPath String Image's upload path [cpr-images, model-images, car-images]
      * @param fileName String image's stored filename in database
@@ -142,7 +169,7 @@ public class Uploads {
             return fileName;
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to upload file", e);
+            throw new FailedRequestException("Failed to upload file: " + e.getMessage());
         }
     }
 }

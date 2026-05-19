@@ -119,6 +119,17 @@ public class ItemController {
     }
 
     /**
+     * Search Product info from Open Food Facts API and create a new item with it.
+     * It will autopopulate name, photo, production date (today), quantity 1, barcode ID. Rest null.
+     * @param barcode String product barcode number
+     * @return Item
+     */
+    @PostMapping("/map")
+    public Item mapItemFromOpenFoodFacts(@RequestParam(value = "barcode") String barcode) {
+        return itemService.createItemFromOpenFoodFacts(barcode);
+    }
+
+    /**
      * Update an existing item.
      * @param request ItemRequest item Object {id Long (required), name String, defaultExpiryPeriodDays (optional) int}
      * @param photo MultipartFile PNG, JPEG. Optional.

@@ -2,6 +2,7 @@ package com.ga.jpantry.services;
 
 import com.ga.jpantry.exceptions.AccessDeniedException;
 import com.ga.jpantry.exceptions.BadRequestException;
+import com.ga.jpantry.exceptions.FailedRequestException;
 import com.ga.jpantry.exceptions.InformationNotFoundException;
 import com.ga.jpantry.models.*;
 import com.ga.jpantry.models.enums.Role;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pl.coderion.model.Product;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,6 +44,10 @@ public class ItemService {
      * Create a new item.
      * @param item Object name String required, rest optional.
      * @param photo MultipartFile PNG, JPEG. Optional.
+     * @param barcode String barcode number.
+     * @param categoryId Long category ID
+     * @param locationId Long location ID
+     * @param sourceId Long source ID
      * @return Item
      */
     public Item create(Item item, MultipartFile photo, String barcode, Long categoryId, Long locationId, Long sourceId) {
@@ -99,6 +105,48 @@ public class ItemService {
         }
 
         return itemRepository.save(item);
+    }
+
+    /**
+     * Create a new item.
+     * @param item Object name String required, rest optional.
+     * @param photoUrl String product image from online source URL. Will be downloaded and stored locally.
+     * @param barcode String barcode number.
+     * @param categoryId Long category ID
+     * @param locationId Long location ID
+     * @param sourceId Long source ID
+     * @return Item
+     */
+    public Item create(Item item, String photoUrl, String barcode, Long categoryId, Long locationId, Long sourceId) {
+        Item savedItem = create(item, (MultipartFile) null, barcode, categoryId, locationId, sourceId);
+        savedItem.setPhoto(photoUrl);
+
+        return itemRepository.save(savedItem);
+    }
+
+    /**
+     * Create new Item object from searching Open Food Facts API with a barcode.
+     * @param barcode String product barcode to search for.
+     * @return Item
+     */
+    public Item createItemFromOpenFoodFacts(String barcode) {
+        try {
+            Product product = barcodeService.searchBarcodeOpenFoodFacts(barcode);
+
+            Item data = new Item();
+
+            data.setName(product.getProductName());
+            data.setProductionDate(LocalDate.now());
+            data.setExpiryDate(null);
+            data.setPrice(null);
+            data.setQuantity(1);
+
+            String productImage = uploads.uploadFromExternalSource(product.getImageUrl(), uploadImagePath);
+
+            return create(data, productImage, barcode, null, null, null);
+        } catch (Exception e) {
+            throw new FailedRequestException("Error from Open Food Facts: " + e.getMessage());
+        }
     }
 
     /**
