@@ -14,6 +14,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pl.coderion.model.Product;
+import pl.coderion.model.ProductResponse;
+import pl.coderion.service.OpenFoodFactsWrapper;
+import pl.coderion.service.impl.OpenFoodFactsWrapperImpl;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -189,5 +193,17 @@ public class BarcodeService {
         } catch (Exception e) {
             throw new BadRequestException("Error executing generate barcode image: " + e.getMessage());
         }
+    }
+
+    /**
+     * Search product barcode through Open Food Facts API.
+     * @param barcode String barcode number.
+     * @return Product Open Food Facts product complete object.
+     */
+    public Product searchBarcodeOpenFoodFacts(String barcode) {
+        OpenFoodFactsWrapper wrapper = new OpenFoodFactsWrapperImpl();
+        ProductResponse response = wrapper.fetchProductByCode(barcode);
+
+        return response.getProduct();
     }
 }

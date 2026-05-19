@@ -8,6 +8,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.coderion.model.Product;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -97,5 +98,15 @@ public class BarcodeController {
     @PostMapping("/generate")
     public ResponseEntity<Resource> generateBarcodeImage(@RequestParam(value = "barcode") String barcode) {
         return barcodeService.generateBarcodeImage(barcode);
+    }
+
+    /**
+     * Search product barcode through Open Food Facts API.
+     * @param barcode String barcode number.
+     * @return Product Open Food Facts product complete object.
+     */
+    @GetMapping("/search")
+    public Product searchBarcodeOpenFoodFacts(@RequestParam(value = "barcode") String barcode) {
+        return barcodeService.searchBarcodeOpenFoodFacts(barcode);
     }
 }
