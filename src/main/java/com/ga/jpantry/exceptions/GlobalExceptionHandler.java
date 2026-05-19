@@ -79,4 +79,16 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(e.getMessage());
     }
+
+    /**
+     * Handle failed request exception.
+     * @param e Exception
+     * @return ResponseEntity String
+     */
+    @ExceptionHandler(value = FailedRequestException.class)
+    public ResponseEntity<String> handleFailedRequest(Exception e) {
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_CONTENT)
+                .body(e.getMessage());
+    }
 }

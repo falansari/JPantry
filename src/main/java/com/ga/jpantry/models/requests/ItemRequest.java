@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 public class ItemRequest {
     private Item item;
+    private String barcode;
     private Long categoryId;
     private Long locationId;
     private Long sourceId;
