@@ -1,0 +1,1602 @@
+{
+  "info": {
+    "_postman_id": "3314fa69-4354-4981-a7bb-8696aec07e20",
+    "name": "JPantry",
+    "description": "# JPantry\n\nA pantry management API for tracking household items, categories, locations, sources, and barcodes.\n\n## User Stories\n\n#### Personas\n- **Guest** — an unauthenticated visitor.\n- **Member** — a registered, authenticated household user with read-only access to pantry data.\n- **Owner** — a privileged user who manages all data (users, items, categories, sources, locations, barcodes) and is the only role allowed to create, update, or delete records.\n\n#### 👑 Owner User Stories\n- As an **owner**, I want to **register other owner accounts**, so that I can delegate administrative responsibilities.\n- As an **owner**, I want to **bootstrap a default owner account on first launch**, so that the system always has an initial privileged user.\n- As an **owner**, I want to **soft delete user accounts by ID**, so that I can manage system integrity without permanently losing data.\n- As an **owner**, I want to **add, edit, and delete pantry items (manually with category, location, source, quantity, and barcode)**, so that I can keep an accurate household inventory.\n- As an **owner**, I want to **add pantry items by mapping them from Open Food Facts via barcode**, so that I can save time on data entry.\n- As an **owner**, I want to **adjust item quantities (e.g., after using or restocking)**, so that the inventory always reflects reality.\n- As an **owner**, I want to **add, edit, and delete shared categories**, so that items have a consistent classification system.\n- As an **owner**, I want to **add, edit, and delete shared sources**, so that items can be accurately tagged with where they came from.\n- As an **owner**, I want to **add, edit, and delete storage locations**, so that I can organize where items are kept (e.g., fridge, pantry shelf).\n- As an **owner**, I want to **delete stored barcodes**, so that I can maintain a clean barcode catalog.\n- As an **owner**, I want to **generate a barcode image from a number**, so that I can print or share it.\n- As an **owner**, I want to **upload, update, and delete my profile photo**, so that I can personalize my account.\n- As an **owner**, I want to **create and update my user profile**, so that my account reflects my identity.\n- As an **owner**, I want to **change my password while logged in**, so that I can keep my account secure.\n- As an **owner**, I want to **log in securely with authentication**, so that only authorized personnel can access sensitive functionality.\n- As an **owner**, I want to **have full access to all system features**, so that I can oversee and maintain the entire application.\n\n#### 🥫 Member User Stories\n- As a **member**, I want to **view a single item by ID, including its photo**, so that I can inspect its details.\n- As a **member**, I want to **list all pantry items**, so that I can see everything in the household pantry at a glance.\n- As a **member**, I want to **filter items by name, category, barcode, location, or source**, so that I can quickly find what I'm looking for.\n- As a **member**, I want to **see items with quantity below a threshold**, so that I know what needs to be restocked.\n- As a **member**, I want to **see items with quantity above a threshold**, so that I avoid over-buying.\n- As a **member**, I want to **browse and look up categories by id or name**, so that I can understand how items are classified.\n- As a **member**, I want to **browse and look up sources by id or name**, so that I can see where items came from.\n- As a **member**, I want to **browse and look up locations by id or name**, so that I can find where items are stored.\n- As a **member**, I want to **scan a barcode image to decode its value**, so that I can identify a product from a photo.\n- As a **member**, I want to **search a barcode online via Open Food Facts**, so that I can fetch product details that aren't stored locally.\n- As a **member**, I want to **list and look up stored barcodes (by id or number)**, so that I can reference the barcode catalog.\n- As a **member**, I want to **view my own user profile and download my profile photo**, so that I can review my account information.\n- As a **member**, I want to **change my password while logged in**, so that I can keep my account secure.\n- As a **member**, I want to **log in securely with authentication**, so that I can access pantry data safely.\n\n#### 👤 Guest User Stories\n- As a **guest**, I want to **register a new account**, so that I can start accessing pantry data.\n- As a **guest**, I want to **verify my email address via the link sent to me**, so that I can activate my account.\n- As a **guest**, I want to **request a new verification token if my original one expired**, so that I can complete signup.\n- As a **guest**, I want to **request a password reset email if I forget my password**, so that I can regain access to my account.\n- As a **guest**, I want to **reset my password using the emailed link**, so that I can choose a new one without logging in.\n- As a **guest**, I want to **perform these account-recovery actions without being logged in**, so that the process is simple and accessible.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50802600",
+    "_collection_link": "https://go.postman.co/collection/50802600-3314fa69-4354-4981-a7bb-8696aec07e20?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User Profiles",
+      "item": [
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}profile",
+              "host": [
+                "{{base_url}}profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User Profile",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"firstName\": \"Tenma\",\r\n    \"lastName\": \"Metsuki\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}profile",
+              "host": [
+                "{{base_url}}profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User's Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"firstName\": \"Ash\",\r\n    \"lastName\": \"Ketchum\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}profile",
+              "host": [
+                "{{base_url}}profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Download User's Profile Photo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}profile/photo",
+              "host": [
+                "{{base_url}}profile"
+              ],
+              "path": [
+                "photo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload User's Profile Photo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/D:/Projects/General Assembly/Java Developer Bootcamp/jdb/projects/JNews/uploads/profile/dc559167-de6b-489f-9ac4-c12e65937c4b_girl2.png"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}profile/photo",
+              "host": [
+                "{{base_url}}profile"
+              ],
+              "path": [
+                "photo"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User's Profile Photo",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "/D:/Projects/General Assembly/Java Developer Bootcamp/jdb/projects/JNews/docs/samples/guy.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}profile/photo",
+              "host": [
+                "{{base_url}}profile"
+              ],
+              "path": [
+                "photo"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"fatima.a.alansari@hotmail.com\",\r\n    \"password\": \"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}register",
+              "host": [
+                "{{base_url}}{{users_base_url}}register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Default Admin User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"twoseasgamesstudio@gmail.com\",\r\n    \"password\": \"@dm!nP@$$\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}register/default",
+              "host": [
+                "{{base_url}}{{users_base_url}}register"
+              ],
+              "path": [
+                "default"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register Admin User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"twoseasgamesstudio@gmail.com\",\r\n    \"password\": \"123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}register/admin",
+              "host": [
+                "{{base_url}}{{users_base_url}}register"
+              ],
+              "path": [
+                "admin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User (Default Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"twoseasgamesstudio@gmail.com\",\r\n    \"password\": \"@dm!nP@$$\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}login",
+              "host": [
+                "{{base_url}}{{users_base_url}}login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"twoseasgamesstudio@gmail.com\",\r\n    \"password\": \"@dm!nP@$$\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}login",
+              "host": [
+                "{{base_url}}{{users_base_url}}login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email from URL",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"token\": \"56b7b6c5-c560-4eb7-abfa-50f7ab1c3e9d\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5002/auth/users/verify?token=07b33a6e-2486-46d8-bc8d-4e57943a855e",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5002",
+              "path": [
+                "auth",
+                "users",
+                "verify"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "07b33a6e-2486-46d8-bc8d-4e57943a855e"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reissue Verification Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"token\": \"56b7b6c5-c560-4eb7-abfa-50f7ab1c3e9d\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}token?token=259c34c4-e8cf-4976-b223-8216deea0861",
+              "host": [
+                "{{base_url}}{{users_base_url}}token"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "259c34c4-e8cf-4976-b223-8216deea0861"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"oldPassword\": \"123\",\r\n    \"newPassword\": \"456\",\r\n    \"confirmNewPassword\": \"456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}change-password",
+              "host": [
+                "{{base_url}}{{users_base_url}}change-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"tenmametsuki@gmail.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}forgot-password",
+              "host": [
+                "{{base_url}}{{users_base_url}}forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"token\": \"b1d97db9-06d9-467f-b48f-1c23fa91a299\",\r\n    \"password\": \"888\",\r\n    \"confirmPassword\": \"888\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8090/auth/users/reset?token=0e1c4265-529c-443d-86c0-69c1f9da3be7",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8090",
+              "path": [
+                "auth",
+                "users",
+                "reset"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "0e1c4265-529c-443d-86c0-69c1f9da3be7"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Soft Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}{{users_base_url}}1",
+              "host": [
+                "{{base_url}}{{users_base_url}}1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "Add Category",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Fresh Foods\",\r\n    \"defaultExpiryPeriodDays\": 7\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}category/add",
+              "host": [
+                "{{base_url}}category"
+              ],
+              "path": [
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Category 2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Canned\",\r\n    \"defaultExpiryPeriodDays\": 365\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}category/add",
+              "host": [
+                "{{base_url}}category"
+              ],
+              "path": [
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Category",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 2,\r\n    \"name\": \"canned\",\r\n    \"defaultExpiryPeriodDays\": 730\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}category/edit",
+              "host": [
+                "{{base_url}}category"
+              ],
+              "path": [
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}category?id=1",
+              "host": [
+                "{{base_url}}category"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Category By Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}category?name=canned",
+              "host": [
+                "{{base_url}}category"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "canned"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}category/list",
+              "host": [
+                "{{base_url}}category"
+              ],
+              "path": [
+                "list"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}category/delete?id=2",
+              "host": [
+                "{{base_url}}category"
+              ],
+              "path": [
+                "delete"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Source",
+      "item": [
+        {
+          "name": "Add Source",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Lulu Hypermarket\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}source/add",
+              "host": [
+                "{{base_url}}source"
+              ],
+              "path": [
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Source",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Ramez\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}source/edit",
+              "host": [
+                "{{base_url}}source"
+              ],
+              "path": [
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Source By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}source?id=1",
+              "host": [
+                "{{base_url}}source"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Source By Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}source?name=Lulu Hypermarket",
+              "host": [
+                "{{base_url}}source"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "Lulu Hypermarket"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Sources",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}source/list",
+              "host": [
+                "{{base_url}}source"
+              ],
+              "path": [
+                "list"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Source",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}source/delete?id=2",
+              "host": [
+                "{{base_url}}source"
+              ],
+              "path": [
+                "delete"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Barcode",
+      "item": [
+        {
+          "name": "Add Source",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Lulu Hypermarket\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}source/add",
+              "host": [
+                "{{base_url}}source"
+              ],
+              "path": [
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Source",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Ramez\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}source/edit",
+              "host": [
+                "{{base_url}}source"
+              ],
+              "path": [
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Barcode By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}barcode?id=1",
+              "host": [
+                "{{base_url}}barcode"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Barcode by Barcode Number",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}barcode?barcode=5000112554359",
+              "host": [
+                "{{base_url}}barcode"
+              ],
+              "query": [
+                {
+                  "key": "barcode",
+                  "value": "5000112554359"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Barcodes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}barcode/list",
+              "host": [
+                "{{base_url}}barcode"
+              ],
+              "path": [
+                "list"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Barcode",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}barcode/delete?id=2",
+              "host": [
+                "{{base_url}}barcode"
+              ],
+              "path": [
+                "delete"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Scan Barcode Image",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "barcode",
+                  "type": "file",
+                  "uuid": "d69a1a78-3741-47f3-b0dc-9c7b4e22689f",
+                  "contentType": "image/png",
+                  "src": "/D:/Projects/General Assembly/Java Developer Bootcamp/jdb/projects/JPantry/docs/samples/item_barcode.webp"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}barcode/scan",
+              "host": [
+                "{{base_url}}barcode"
+              ],
+              "path": [
+                "scan"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Barcode Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}barcode/generate?barcode=5449000131805",
+              "host": [
+                "{{base_url}}barcode"
+              ],
+              "path": [
+                "generate"
+              ],
+              "query": [
+                {
+                  "key": "barcode",
+                  "value": "5449000131805"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Barcode Online",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "barcode",
+                  "type": "file",
+                  "uuid": "d69a1a78-3741-47f3-b0dc-9c7b4e22689f",
+                  "contentType": "image/png",
+                  "src": "/D:/Projects/General Assembly/Java Developer Bootcamp/jdb/projects/JPantry/docs/samples/item_barcode.webp"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}barcode/search?barcode=5449000131805",
+              "host": [
+                "{{base_url}}barcode"
+              ],
+              "path": [
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "barcode",
+                  "value": "5449000131805"
+                },
+                {
+                  "key": "",
+                  "value": null,
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Location",
+      "item": [
+        {
+          "name": "Add Location",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Fridge\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}location/add",
+              "host": [
+                "{{base_url}}location"
+              ],
+              "path": [
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Location",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Pantry Cabinet\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}location/edit",
+              "host": [
+                "{{base_url}}location"
+              ],
+              "path": [
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Location By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}location?id=1",
+              "host": [
+                "{{base_url}}location"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Location By Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}location?name=fridge",
+              "host": [
+                "{{base_url}}location"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "fridge"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Locations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}location/list",
+              "host": [
+                "{{base_url}}location"
+              ],
+              "path": [
+                "list"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Location",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}location/delete?id=3",
+              "host": [
+                "{{base_url}}location"
+              ],
+              "path": [
+                "delete"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "3"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Item",
+      "item": [
+        {
+          "name": "Add Item",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "request",
+                  "value": "{\n    \"item\": {\n        \"name\": \"loaf bread\",\n        \"productionDate\": \"2026-03-12\",\n        \"expiryDate\": \"\",\n        \"price\": 0.356,\n        \"quantity\": 1\n    },\n    \"categoryId\": 1,\n    \"locationId\": 1,\n    \"sourceId\": 1\n}",
+                  "type": "text",
+                  "uuid": "836e4695-027b-46ac-a29c-659361d16d32",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "uuid": "1393cb90-8dd8-4748-a416-5cb94bfd58b2",
+                  "contentType": "image/jpeg",
+                  "src": "/D:/Projects/General Assembly/Java Developer Bootcamp/jdb/projects/JPantry/docs/samples/item_1.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}item/add",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Item 2",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "request",
+                  "value": "{\n    \"item\": {\n        \"name\": \"Coca Cola Zero 330ml Can\",\n        \"productionDate\": \"2026-03-12\",\n        \"expiryDate\": \"\",\n        \"price\": 0.250,\n        \"quantity\": 6\n    },\n\"barcode\": \"5000112554359\",\n    \"categoryId\": 2,\n    \"locationId\": 1,\n    \"sourceId\": 1\n}",
+                  "type": "text",
+                  "uuid": "836e4695-027b-46ac-a29c-659361d16d32",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "uuid": "1393cb90-8dd8-4748-a416-5cb94bfd58b2",
+                  "contentType": "image/jpeg",
+                  "src": "/D:/Projects/General Assembly/Java Developer Bootcamp/jdb/projects/JPantry/docs/samples/item_2.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}item/add",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "add"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Map Item From Open Food Facts",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "request",
+                  "value": "{\n    \"item\": {\n        \"name\": \"Coca Cola Zero 330ml Can\",\n        \"productionDate\": \"2026-03-12\",\n        \"expiryDate\": \"\",\n        \"price\": 0.250,\n        \"quantity\": 6\n    },\n\"barcode\": \"5000112554359\",\n    \"categoryId\": 2,\n    \"locationId\": 1,\n    \"sourceId\": 1\n}",
+                  "type": "text",
+                  "uuid": "836e4695-027b-46ac-a29c-659361d16d32",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "uuid": "1393cb90-8dd8-4748-a416-5cb94bfd58b2",
+                  "contentType": "image/jpeg",
+                  "src": "/D:/Projects/General Assembly/Java Developer Bootcamp/jdb/projects/JPantry/docs/samples/item_2.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}item/map?barcode=5449000131805",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "map"
+              ],
+              "query": [
+                {
+                  "key": "barcode",
+                  "value": "5449000131805"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Item 2",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "request",
+                  "value": "{\n    \"item\": {\n\"id\": 10,\n        \"name\": \"Coca Cola Zero 330ml Can\",\n        \"productionDate\": \"2026-03-12\",\n        \"expiryDate\": \"\",\n        \"price\": 0.30,\n        \"quantity\": 6\n    },\n\"barcode\": \"5000112554359\",\n    \"categoryId\": 2,\n    \"locationId\": 1,\n    \"sourceId\": 1\n}",
+                  "type": "text",
+                  "uuid": "836e4695-027b-46ac-a29c-659361d16d32",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "uuid": "1393cb90-8dd8-4748-a416-5cb94bfd58b2",
+                  "contentType": "image/jpeg",
+                  "value": null
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}item/edit",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Edit Item",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "request",
+                  "value": "{\n    \"item\": {\n\"id\": 3,\n        \"name\": \"loaf bread\",\n        \"productionDate\": \"2026-03-12\",\n\"expiryDate\": \"2026-05-26\",\n        \"price\": 0.356,\n        \"quantity\": 3\n    },\n    \"categoryId\": 1,\n    \"locationId\": 2,\n    \"sourceId\": 1\n}",
+                  "type": "text",
+                  "uuid": "836e4695-027b-46ac-a29c-659361d16d32",
+                  "contentType": "application/json"
+                },
+                {
+                  "key": "photo",
+                  "type": "file",
+                  "uuid": "1393cb90-8dd8-4748-a416-5cb94bfd58b2",
+                  "contentType": "image/jpeg",
+                  "src": "/D:/Projects/General Assembly/Java Developer Bootcamp/jdb/projects/JPantry/docs/samples/item_1.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}item/edit",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Item By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item?id=1",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Item Photo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/photo?id=10",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "photo"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/list",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "list"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items By Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/list/by?name=loaf bread",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "list",
+                "by"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "loaf bread"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items By Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/list/by?category=1",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "list",
+                "by"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items By Barcode",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/list/by?barcode=5000112554359",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "list",
+                "by"
+              ],
+              "query": [
+                {
+                  "key": "barcode",
+                  "value": "5000112554359"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items By Location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/list/by?location=2",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "list",
+                "by"
+              ],
+              "query": [
+                {
+                  "key": "location",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items By Source",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/list/by?source=1",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "list",
+                "by"
+              ],
+              "query": [
+                {
+                  "key": "source",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items With Quantity Less Than",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/list/less?q=4",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "list",
+                "less"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items With Quantity Greater Than",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/list/greater?q=4",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "list",
+                "greater"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "4"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Item By ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}item/delete?id=8",
+              "host": [
+                "{{base_url}}item"
+              ],
+              "path": [
+                "delete"
+              ],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "8"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0d29zZWFzZ2FtZXNzdHVkaW9AZ21haWwuY29tIiwiaWF0IjoxNzc5MjEzMDE0LCJleHAiOjE3NzkyOTk0MTR9.IvsWo0ItMS8bHg1tNYxZV9KCcA0QK-1fRpRxbWtfaaU",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "key": "users_base_url",
+      "value": ""
+    }
+  ]
+}
