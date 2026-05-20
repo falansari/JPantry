@@ -35,7 +35,7 @@
     * [👩🏽‍💻 General Approach to Development](#-general-approach-to-development)
     * [💀 Major Hurdles & Challenges](#-major-hurdles--challenges)
     * [📄 References](#-references)
-  * [📝 Installation & Testing Instructions](#-installation--testing-instructions)
+  * [📝 Installation & Testing Instructions (Using Docker)](#-installation--testing-instructions-using-docker)
 <!-- TOC -->
 
 ---
@@ -312,3 +312,15 @@ through POM changes.
 - [Open Food Facts API documentation](https://openfoodfacts.github.io/openfoodfacts-server/api/) for setting up and using Open Food Facts API.
 
 ---
+
+## 📝 Installation & Testing Instructions (Using Docker)
+1. [Clone the repository](https://github.com/falansari/JPantry.git).
+2. Copy [application-dockerexample.properties](src/main/resources/application-dockerexample.properties) file, and name the copy application-docker.properties, and update the details inside for your connection info.
+3. Make sure you have Docker Desktop setup and working on your system. This app was created and setup with Docker Desktop on Windows 10. You will need Windows' Linux Subsystem to run it.
+4. In bash terminal (can use Git Bash, or IntelliJ's built-in terminal), run the commands `docker-compose build` then `docker-compose up`. Leave the terminal window open if you want to see live logs through it. You can alternatively see them through docker's app.
+5. For Endpoint Testing: import POSTMAN endpoints collection from [JPantry.postman_collection.json](docs/JPantry.postman_collection.json) file in docs folder,
+   and update the collection's **base_url variable** to `http://localhost:5001/` (change :#### to match your chosen port number in properties) and **users_base_url** to `auth/users/`
+6. Create the default admin account using `/auth/users/register/default` REST endpoint. Use your own e-mail address to get verification token.
+7. Verify the admin account by pasting and running the URL link in the Verify Email from URL endpoint in Users folder (Postman).
+8. Login to your newly verified account through Login User endpoint in Users folder.
+9. Copy the response JWT token and paste it in JPantry → Authorization → Auth Type (Bearer Token) → Token field. This token will remain active for 24hrs (after which you'll need to login again). Now you can test use all the Postman endpoints.
